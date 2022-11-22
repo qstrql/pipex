@@ -6,7 +6,7 @@
 /*   By: mjouot <mjouot@student.42angouleme.fr>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/04 16:15:42 by mjouot            #+#    #+#             */
-/*   Updated: 2022/11/22 11:45:30 by mjouot           ###   ########.fr       */
+/*   Updated: 2022/11/22 16:23:16 by mjouot           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,7 +23,7 @@
 # include <string.h> // strerror
 
 //ft_utils.c
-void	ft_error(void);
+void	ft_error(char *str);
 
 //ft_are_args_ok.c
 void	ft_verif_args(char *argv);

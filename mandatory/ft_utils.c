@@ -6,15 +6,15 @@
 /*   By: mjouot <mjouot@student.42angouleme.fr>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/22 11:40:05 by mjouot            #+#    #+#             */
-/*   Updated: 2022/11/22 12:50:46 by mjouot           ###   ########.fr       */
+/*   Updated: 2022/11/22 16:23:04 by mjouot           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "pipex.h"
 #include <string.h>
 
-void	ft_error(void)
+void	ft_error(char *str)
 {
-	strerror(0);
+	perror(str);
 	exit(EXIT_FAILURE);
 }

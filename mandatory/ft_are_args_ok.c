@@ -6,16 +6,11 @@
 /*   By: mjouot <mjouot@student.42angouleme.fr>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/22 11:39:36 by mjouot            #+#    #+#             */
-/*   Updated: 2022/11/22 12:48:33 by mjouot           ###   ########.fr       */
+/*   Updated: 2022/11/22 15:11:55 by mjouot           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "pipex.h"
-
-void	ft_verif_args(char *argv)
-{
-
-}
 
 int	ft_space_only(char *argv)
 {
@@ -47,7 +42,7 @@ void	ft_are_args_ok(int argc, char **argv)
 	{
 		if (ft_space_only(argv[i]) == 1)
 			ft_error();
-		ft_verif_args(argv[i]);
+		// ft_verif_args(argv[i]);
 		i++;
 	}
 }
