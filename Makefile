@@ -6,15 +6,14 @@
 #    By: mjouot <mjouot@student.42angouleme.fr>     +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2022/11/04 16:15:35 by mjouot            #+#    #+#              #
-#    Updated: 2022/11/22 11:51:02 by mjouot           ###   ########.fr        #
+#    Updated: 2022/11/22 19:19:07 by mjouot           ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
 NAME = pipex
 
 SRCS = mandatory/pipex.c \
-	   mandatory/ft_utils.c \
-	   mandatory/ft_are_args_ok.c 
+	   mandatory/ft_utils.c
 
 SRCS_BONUS =
 
