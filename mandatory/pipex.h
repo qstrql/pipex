@@ -6,7 +6,7 @@
 /*   By: mjouot <mjouot@student.42angouleme.fr>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/04 16:15:42 by mjouot            #+#    #+#             */
-/*   Updated: 2022/11/22 16:23:16 by mjouot           ###   ########.fr       */
+/*   Updated: 2022/11/23 16:20:32 by mjouot           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,10 +24,12 @@
 
 //ft_utils.c
 void	ft_error(char *str);
+void	free_all(char **splitted);
 
-//ft_are_args_ok.c
-void	ft_verif_args(char *argv);
-int		ft_space_only(char *argv);
-void	ft_are_args_ok(int argc, char **argv);
+//ft_processes.c
+char	**ft_get_paths(char **envp);
+char	*ft_path(char **envp, char *cmd);
+void	ft_process_one(char **argv, char **envp, int *pipefd, int *fd);
+void	ft_process_two(char **argv, char **envp, int *pipefd, int *fd);
 
 #endif
