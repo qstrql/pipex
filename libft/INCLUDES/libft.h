@@ -6,7 +6,7 @@
 /*   By: mjouot <mjouot@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/09/26 16:15:51 by mjouot            #+#    #+#             */
-/*   Updated: 2022/11/15 18:11:14 by mjouot           ###   ########.fr       */
+/*   Updated: 2022/11/23 17:37:33 by mjouot           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -98,5 +98,6 @@ int		ft_intlen(int n);
 int		ft_ishexdigit(int c);
 int		ft_strcmp(const char *s1, const char *s2);
 char	*gnl(int fd);
+t_list	*ft_strs_to_lst(char **strs);
 
 #endif

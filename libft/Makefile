@@ -6,7 +6,7 @@
 #    By: mjouot <marvin@42.fr>                      +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2022/10/05 16:46:46 by mjouot            #+#    #+#              #
-#    Updated: 2022/11/14 22:42:13 by mjouot           ###   ########.fr        #
+#    Updated: 2022/11/23 17:38:55 by mjouot           ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 NAME = libft.a
@@ -76,7 +76,8 @@ SRCS_EXTRA = \
 		SRCS/extra/ft_intlen.c \
 		SRCS/extra/ft_ishexdigit.c \
 		SRCS/extra/ft_printf_tab.c \
-		SRCS/extra/ft_strcmp.c
+		SRCS/extra/ft_strcmp.c \
+		SRCS/extra/ft_strs_to_lst.c 
 
 CC = clang
 OBJS = $(SRCS:.c=.o)
@@ -106,5 +107,6 @@ fclean: clean
 
 re: fclean all
 
+.SILENT:
 .PHONY: all bonus clean fclean re
 
