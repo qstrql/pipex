@@ -6,7 +6,7 @@
 /*   By: mjouot <mjouot@student.42angouleme.fr>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/23 12:51:34 by mjouot            #+#    #+#             */
-/*   Updated: 2022/11/23 18:05:25 by mjouot           ###   ########.fr       */
+/*   Updated: 2022/11/23 20:34:40 by mjouot           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -41,7 +41,7 @@ char	*ft_path(char **envp, char *cmd)
 	{
 		path = ft_strjoin(paths[i], "/");
 		path = ft_strjoin(path, cmd);
-		if (access(path, F_OK))
+		if (!access(path, F_OK))
 		{
 			free_all(paths);
 			return (path);
@@ -63,20 +63,20 @@ void	ft_process_one(char **argv, char **envp, int *pipefd, int *fd)
 		ft_error("fork");
 	if (pid == 0)
 	{
-		cmd = ft_split(argv[2], ' ');
 		fd[0] = open(argv[1], O_RDONLY);
 		if (fd[0] < 0)
 			ft_error(argv[1]);
-		dup2(fd[0], STDIN_FILENO); // we want f1 to be execve() input
-		dup2(pipefd[1], STDOUT_FILENO);
+		cmd = ft_split(argv[2], ' ');
 		close(pipefd[0]);
+		dup2(fd[0], STDIN_FILENO);
+		dup2(pipefd[1], STDOUT_FILENO);
 		if (cmd[0] != NULL && ft_path(envp, cmd[0]))
 		{
 			execve(ft_path(envp, cmd[0]), cmd, envp);
 			free_all(cmd);
 		}
 		else
-			write(2, "Command not found\n", 18);
+			ft_cant_find_cmd(cmd);
 	}
 }
 
@@ -90,13 +90,13 @@ void	ft_process_two(char **argv, char **envp, int *pipefd, int *fd)
 		ft_error("fork");
 	if (pid == 0)
 	{
-		cmd = ft_split(argv[2], ' ');
 		fd[1] = open(argv[4], O_WRONLY | O_CREAT | O_TRUNC, 0644);
 		if (fd[1] < 0)
 			ft_error(argv[4]);
-		dup2(fd[1], STDIN_FILENO); // we want f1 to be execve() input
-		dup2(pipefd[0], STDOUT_FILENO);
+		cmd = ft_split(argv[3], ' ');
 		close(pipefd[1]);
+		dup2(fd[1], STDOUT_FILENO);
+		dup2(pipefd[0], STDIN_FILENO);
 		if (cmd[0] != NULL && ft_path(envp, cmd[0]))
 		{
 			execve(ft_path(envp, cmd[0]), cmd, envp);

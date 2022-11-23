@@ -6,7 +6,7 @@
 /*   By: mjouot <mjouot@student.42angouleme.fr>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/04 16:15:42 by mjouot            #+#    #+#             */
-/*   Updated: 2022/11/23 16:20:32 by mjouot           ###   ########.fr       */
+/*   Updated: 2022/11/23 20:27:15 by mjouot           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,6 +25,7 @@
 //ft_utils.c
 void	ft_error(char *str);
 void	free_all(char **splitted);
+void	ft_cant_find_cmd(char **cmd);
 
 //ft_processes.c
 char	**ft_get_paths(char **envp);
