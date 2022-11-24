@@ -6,7 +6,7 @@
 /*   By: mjouot <mjouot@student.42angouleme.fr>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/04 16:15:42 by mjouot            #+#    #+#             */
-/*   Updated: 2022/11/23 20:27:15 by mjouot           ###   ########.fr       */
+/*   Updated: 2022/11/24 17:09:43 by mjouot           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,5 +32,6 @@ char	**ft_get_paths(char **envp);
 char	*ft_path(char **envp, char *cmd);
 void	ft_process_one(char **argv, char **envp, int *pipefd, int *fd);
 void	ft_process_two(char **argv, char **envp, int *pipefd, int *fd);
+void	ft_start_processes(char **argv, char **envp, int *pipefd, int *fd);
 
 #endif

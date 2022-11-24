@@ -6,7 +6,7 @@
 /*   By: mjouot <mjouot@student.42angouleme.fr>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/23 12:51:34 by mjouot            #+#    #+#             */
-/*   Updated: 2022/11/23 20:34:40 by mjouot           ###   ########.fr       */
+/*   Updated: 2022/11/24 17:10:02 by mjouot           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -105,4 +105,16 @@ void	ft_process_two(char **argv, char **envp, int *pipefd, int *fd)
 		else
 			write(2, "Command not found\n", 18);
 	}
+}
+
+void	ft_start_processes(char **argv, char **envp, int *pipefd, int *fd)
+{
+	int	status;
+
+	ft_process_one(argv, envp, pipefd, fd);
+	ft_process_two(argv, envp, pipefd, fd);
+	close(pipefd[0]);
+	close(pipefd[1]);
+    waitpid(-1, &status, 0);
+    waitpid(-1, &status, 0);
 }
