@@ -6,7 +6,7 @@
 /*   By: mjouot <mjouot@student.42angouleme.fr>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/04 16:15:30 by mjouot            #+#    #+#             */
-/*   Updated: 2022/12/01 21:14:24 by mjouot           ###   ########.fr       */
+/*   Updated: 2022/12/01 21:22:53 by mjouot           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -43,13 +43,13 @@ char	*path(char **envp, char *cmd)
 		path = ft_strjoin(path, cmd);
 		if (!access(path, F_OK))
 		{
-			free_all(paths);
+			free_strs(paths);
 			return (path);
 		}
 		free(path);
 		i++;
 	}
-	free_all(paths);
+	free_strs(paths);
 	return (0);
 }
 
@@ -69,7 +69,7 @@ void	child_two(t_pipex *d)
 		if (cmd[0] != NULL && path(d->envp, cmd[0]))
 		{
 			execve(path(d->envp, cmd[0]), cmd, d->envp);
-			free_all(cmd);
+			free_strs(cmd);
 		}
 		else
 			write(2, "Command not found\n", 18);
@@ -92,7 +92,7 @@ void	child_one(t_pipex *d)
 		if (cmd[0] != NULL && path(d->envp, cmd[0]))
 		{
 			execve(path(d->envp, cmd[0]), cmd, d->envp);
-			free_all(cmd);
+			free_strs(cmd);
 		}
 		else
 			cant_find_cmd(cmd);
@@ -115,7 +115,6 @@ t_pipex	init(int argc, char **argv, char **envp)
 {
 	t_pipex d;
 
-	d = ft_calloc(1, sizeof(t_pipex));
 	d.argc = argc;
 	d.argv = argv;
 	d.envp = envp;
@@ -126,13 +125,10 @@ t_pipex	init(int argc, char **argv, char **envp)
 	d.fd_io[1] = open(d.argv[4], O_WRONLY | O_CREAT | O_TRUNC, 0644);
 	if (d.fd_io[1] < 0)
 			is_error("fd_io error", &d);
-	d.pipefd = ft_calloc(d.nb_cmds - 1, sizeof(d.pipefd) * 2);
-	if (!d.pipefd)
-		is_error("Pipe error", &d);
+	ft_bzero(d.pipefd, 2);
 	if (pipe(d.pipefd) < 0)
 		is_error("Pipefd error", &d);
-	d.pid[0] = 0;
-	d.pid[1] = 0;
+	ft_bzero(d.pid, 2);
 	d.idx = 0;
 	return (d);
 }
