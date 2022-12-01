@@ -6,33 +6,47 @@
 /*   By: mjouot <mjouot@student.42angouleme.fr>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/22 11:40:05 by mjouot            #+#    #+#             */
-/*   Updated: 2022/11/23 20:26:50 by mjouot           ###   ########.fr       */
+/*   Updated: 2022/12/01 20:24:39 by mjouot           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "pipex.h"
 #include <string.h>
 
-void	free_all(char **splitted)
+void	free_strs(char **strs)
 {
 	int	i;
 
 	i = 0;
-	while (splitted[i] != NULL)
+	while (strs[i] != NULL)
 	{
-		free(splitted[i]);
+		free(strs[i]);
 		i++;
 	}
-	free(splitted);
+	free(strs);
 }
 
-void	ft_error(char *str)
+void	is_error(char *str, t_pipex *d)
 {
+	int	i;
+
+	i = 0;
+	if (d)
+	{	
+		while (i < (d->nb_cmds - 1) * 2)
+			close(d->pipefd[i++]);
+		if (d->fd_io[0] != -1)
+		close(d->fd_io[0]);
+		if (d->fd_io[1] != -1)
+		close(d->fd_io[1]);
+		if (d->pipefd != NULL)
+			free(d->pipefd);
+	}
 	perror(str);
 	exit(EXIT_FAILURE);
 }
 
-void	ft_cant_find_cmd(char **cmd)
+void	cant_find_cmd(char **cmd)
 {
 	write(2, "Command not found\n", 18);
 	free_all(cmd);

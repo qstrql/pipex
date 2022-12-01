@@ -6,7 +6,7 @@
 /*   By: mjouot <mjouot@student.42angouleme.fr>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/04 16:15:42 by mjouot            #+#    #+#             */
-/*   Updated: 2022/11/24 17:09:43 by mjouot           ###   ########.fr       */
+/*   Updated: 2022/12/01 21:08:10 by mjouot           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,16 +22,21 @@
 # include <stdlib.h> // free
 # include <string.h> // strerror
 
-//ft_utils.c
-void	ft_error(char *str);
-void	free_all(char **splitted);
-void	ft_cant_find_cmd(char **cmd);
+typedef struct s_pipex
+{
+	char	**envp;
+	char	**argv;
+	int		argc;
+	int		nb_cmds;
+	int		fd_io[2];
+	int		pipefd[2];
+	int		pid[2];
+	int		idx;
+}		t_pipex;
 
-//ft_processes.c
-char	**ft_get_paths(char **envp);
-char	*ft_path(char **envp, char *cmd);
-void	ft_process_one(char **argv, char **envp, int *pipefd, int *fd);
-void	ft_process_two(char **argv, char **envp, int *pipefd, int *fd);
-void	ft_start_processes(char **argv, char **envp, int *pipefd, int *fd);
+//ft_utils.c
+void	is_error(char *str, t_pipex *d);
+void	free_all(char **strs);
+void	cant_find_cmd(char **cmd);
 
 #endif
