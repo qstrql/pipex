@@ -6,7 +6,7 @@
 /*   By: mjouot <mjouot@student.42angouleme.fr>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/04 16:15:30 by mjouot            #+#    #+#             */
-/*   Updated: 2022/12/01 21:24:03 by mjouot           ###   ########.fr       */
+/*   Updated: 2022/12/02 14:47:32 by mjouot           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -41,7 +41,6 @@ char	*path(char **envp, char *cmd)
 	{
 		path = ft_strjoin(paths[i], "/");
 		path = ft_strjoin(path, cmd);
-	d = ft_calloc(1, sizeof(t_pipex));
 		if (!access(path, F_OK))
 		{
 			free_strs(paths);
@@ -69,6 +68,8 @@ void	child_two(t_pipex *d)
 		dup2(d->pipefd[0], STDIN_FILENO);
 		if (cmd[0] != NULL && path(d->envp, cmd[0]))
 		{
+			close(d->pipefd[0]);
+			close(d->fd_io[1]);
 			execve(path(d->envp, cmd[0]), cmd, d->envp);
 			free_strs(cmd);
 		}
@@ -92,6 +93,8 @@ void	child_one(t_pipex *d)
 		dup2(d->pipefd[1], STDOUT_FILENO);
 		if (cmd[0] != NULL && path(d->envp, cmd[0]))
 		{
+			close(d->pipefd[1]);
+			close(d->fd_io[0]);
 			execve(path(d->envp, cmd[0]), cmd, d->envp);
 			free_strs(cmd);
 		}
