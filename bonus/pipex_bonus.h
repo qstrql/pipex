@@ -1,17 +1,17 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   pipex.h                                            :+:      :+:    :+:   */
+/*   pipex_bonus.h                                      :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: mjouot <mjouot@student.42angouleme.fr>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/04 16:15:42 by mjouot            #+#    #+#             */
-/*   Updated: 2022/12/05 10:25:17 by mjouot           ###   ########.fr       */
+/*   Updated: 2022/12/05 10:53:05 by mjouot           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#ifndef PIPEX_H
-# define PIPEX_H
+#ifndef PIPEX_BONUS_H
+# define PIPEX_BONUS_H
 
 # include "../libft/INCLUDES/libft.h"
 #include <sys/stat.h> //open access
@@ -31,15 +31,17 @@ typedef struct s_pipex
 	int		argc;
 	int		nb_cmds;
 	int		fd_io[2];
-	int		pipefd[2];
-	int		pid[2];
+	int		*pipefd;
+	int		*pid;
+	char 	**cmd;
+	char 	*path;
 	int		idx;
 }		t_pipex;
-//paths.c
+//paths_bonus.c
 char	**get_paths(char **envp);
 char	*path(char **envp, char *cmd);
 
-//utils.c
+//utils_bonus.c
 void	is_error(char *str, t_pipex *d);
 void	free_strs(char **strs);
 void	cant_find_cmd(char **cmd);
