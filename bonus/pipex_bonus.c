@@ -6,11 +6,13 @@
 /*   By: mjouot <mjouot@student.42angouleme.fr>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/04 16:15:30 by mjouot            #+#    #+#             */
-/*   Updated: 2022/12/05 11:04:05 by mjouot           ###   ########.fr       */
+/*   Updated: 2022/12/05 14:14:39 by mjouot           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "pipex_bonus.h"
+#include <sys/wait.h>
+#include <unistd.h>
 
 void redirect_io(t_pipex *d)
 {
@@ -25,33 +27,61 @@ void redirect_io(t_pipex *d)
 		dup2(d->pipefd[0], STDIN_FILENO);
 	}
 	else
-		dup2();
-		dup2();
+		dup2(, STDOUT_FILENO);
+		dup2(, STDIN_FILENO);
 }
 
-void	child(t_pipex *d)
+void	child(t_pipex *d, char **envp)
 {
 		redirect_io(d);
 		close(d->pipefd[1]);
 		close(d->fd_io[0]);
-		if (!execve(d->path, d->cmd, d->envp))
+		if (!execve(d->path, d->cmd, envp))
 			cant_find_cmd(d->cmd);
 }
 
-int	start_process(t_pipex *d)
+void	start_process(t_pipex *d, char **argv, char **envp)
 {
 	if (pipe(d->pipefd) == -1)
 		is_error("pipefd error", d);
 	while (d->idx < d->nb_cmds)
 	{
-		d->cmd = ft_split(d->argv[d->idx + 2], ' ');
-		d->path = path(d->envp, d->cmd[d->idx + 2]);
+		d->cmd = ft_split(argv[d->idx + 2], ' ');
+		d->path = path(envp, d->cmd[d->idx + 2]);
 		d->pid[d->idx] = fork();
 		if (d->pid[d->idx] == 0)
-			child(d);
+			child(d, envp);
 		free_strs(d->cmd);
 		free(d->path);
 		d->idx++;
+	}
+}
+
+void	wait_for_childs(t_pipex *d)
+{
+	int	status;
+	pid_t wait_for;
+
+	d->idx -= 1;
+	while (d->idx >= 0)
+	{
+		wait_for = waitpid(d->pid[d->idx], &status, 0);
+		d->idx--;
+	}
+	free(d->pipefd);
+	free(d->pid);
+}
+
+void	link_pipes(t_pipex *d)
+{
+	int	i;
+
+	i = 0;
+	while (i < d->nb_cmds - 1)
+	{
+		if (pipe(d->pipefd + 2 * i) < 0)
+			is_error("pipefd linking error", d);
+		i++;
 	}
 }
 
@@ -59,22 +89,21 @@ t_pipex	init(int argc, char **argv, char **envp)
 {
 	t_pipex d;
 
-	d.argc = argc;
-	d.argv = argv;
-	d.envp = envp;
 	d.nb_cmds = argc - 3;
-	d.fd_io[0] = open(d.argv[1], O_RDONLY);
+	d.fd_io[0] = open(argv[1], O_RDONLY);
 	if (d.fd_io[0] < 0)
 			is_error("fd_io error", &d);
-	d.fd_io[1] = open(d.argv[4], O_WRONLY | O_CREAT | O_TRUNC, 0644);
+	d.fd_io[1] = open(argv[argc - 1], O_WRONLY | O_CREAT | O_TRUNC, 0644);
 	if (d.fd_io[1] < 0)
 			is_error("fd_io error", &d);
-	ft_bzero(d.pipefd, 2);
-	if (pipe(d.pipefd) < 0)
-		is_error("Pipefd error", &d);
-	ft_bzero(d.pid, 2);
+	d.pipefd = ft_calloc(d.nb_cmds - 1, sizeof(d.pipefd) * 2);
+	if (!d.pipefd)
+		is_error("pipefd error", &d);
+	d.pid = ft_calloc(d.nb_cmds - 1, sizeof(d.pid));
+	if (!d.pid)
+		is_error("pid error", &d);
+	link_pipes(&d);
 	d.idx = 0;
-	
 	return (d);
 }
 
@@ -82,14 +111,16 @@ int	main(int argc, char **argv, char **envp)
 {
 	t_pipex d;
 
-	if (argc != 5)
+	if (argc < 5)
 	{
-		ft_putendl_fd("Wrong arguments, use ./pipex file1 cmd1 cmd2 file2", 2);
+		ft_putendl_fd
+			("Wrong arguments, use ./pipex file1 cmd1 cmd2 ... file2", 2);
 		return (0);
 	}
 	if (!envp || envp[0][0] == '\0')
 		is_error("Envp error", &d);
 	d = init(argc, argv, envp);
-	start_process(&d);
+	start_process(&d, argv, envp);
+	wait_for_childs(&d);
 	return (0);
 }

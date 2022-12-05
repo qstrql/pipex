@@ -6,7 +6,7 @@
 /*   By: mjouot <mjouot@student.42angouleme.fr>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/04 16:15:42 by mjouot            #+#    #+#             */
-/*   Updated: 2022/12/05 10:53:05 by mjouot           ###   ########.fr       */
+/*   Updated: 2022/12/05 13:46:19 by mjouot           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,9 +26,6 @@
 
 typedef struct s_pipex
 {
-	char	**envp;
-	char	**argv;
-	int		argc;
 	int		nb_cmds;
 	int		fd_io[2];
 	int		*pipefd;
