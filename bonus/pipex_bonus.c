@@ -6,7 +6,7 @@
 /*   By: mjouot <mjouot@student.42angouleme.fr>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/04 16:15:30 by mjouot            #+#    #+#             */
-/*   Updated: 2022/12/05 14:14:39 by mjouot           ###   ########.fr       */
+/*   Updated: 2022/12/05 17:04:43 by mjouot           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -57,7 +57,7 @@ void	start_process(t_pipex *d, char **argv, char **envp)
 	}
 }
 
-void	wait_for_childs(t_pipex *d)
+void	wait_for_child(t_pipex *d)
 {
 	int	status;
 	pid_t wait_for;
@@ -66,6 +66,8 @@ void	wait_for_childs(t_pipex *d)
 	while (d->idx >= 0)
 	{
 		wait_for = waitpid(d->pid[d->idx], &status, 0);
+		if (wait_for < 0)
+			is_error("waitpid error", d);
 		d->idx--;
 	}
 	free(d->pipefd);
@@ -121,6 +123,6 @@ int	main(int argc, char **argv, char **envp)
 		is_error("Envp error", &d);
 	d = init(argc, argv, envp);
 	start_process(&d, argv, envp);
-	wait_for_childs(&d);
+	wait_for_child(&d);
 	return (0);
 }

@@ -6,7 +6,7 @@
 #    By: mjouot <mjouot@student.42angouleme.fr>     +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2022/11/04 16:15:35 by mjouot            #+#    #+#              #
-#    Updated: 2022/12/05 10:25:37 by mjouot           ###   ########.fr        #
+#    Updated: 2022/12/05 17:35:24 by mjouot           ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -15,6 +15,10 @@ NAME = pipex
 SRCS = mandatory/pipex.c \
 	   mandatory/paths.c \
 	   mandatory/utils.c
+
+SRCS_BONUS = bonus/pipex_bonus.c \
+			 bonus/utils_bonus.c \
+			 bonus/paths_bonus.c
 
 SRCS_BONUS =
 
