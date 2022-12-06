@@ -6,11 +6,12 @@
 #    By: mjouot <mjouot@student.42angouleme.fr>     +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2022/11/04 16:15:35 by mjouot            #+#    #+#              #
-#    Updated: 2022/12/05 17:35:24 by mjouot           ###   ########.fr        #
+#    Updated: 2022/12/06 11:58:23 by mjouot           ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
 NAME = pipex
+NAME_BONUS = pipex_bonus
 
 SRCS = mandatory/pipex.c \
 	   mandatory/paths.c \
@@ -19,8 +20,6 @@ SRCS = mandatory/pipex.c \
 SRCS_BONUS = bonus/pipex_bonus.c \
 			 bonus/utils_bonus.c \
 			 bonus/paths_bonus.c
-
-SRCS_BONUS =
 
 CC = clang
 OBJS = $(SRCS:.c=.o)
@@ -38,7 +37,7 @@ all: $(NAME)
 
 bonus: $(OBJS_BONUS)
 		make extra -C libft
-		$(CC) $(FLAGS) $(OBJS_BONUS) -o $(NAME) libft/libft.a
+		$(CC) $(FLAGS) $(OBJS_BONUS) -o $(NAME_BONUS) libft/libft.a
 
 clean:
 	make clean -C libft

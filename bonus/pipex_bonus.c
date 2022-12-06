@@ -6,7 +6,7 @@
 /*   By: mjouot <mjouot@student.42angouleme.fr>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/04 16:15:30 by mjouot            #+#    #+#             */
-/*   Updated: 2022/12/05 17:04:43 by mjouot           ###   ########.fr       */
+/*   Updated: 2022/12/06 11:59:02 by mjouot           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,9 +26,6 @@ void redirect_io(t_pipex *d)
 		dup2(d->fd_io[1], STDOUT_FILENO);
 		dup2(d->pipefd[0], STDIN_FILENO);
 	}
-	else
-		dup2(, STDOUT_FILENO);
-		dup2(, STDIN_FILENO);
 }
 
 void	child(t_pipex *d, char **envp)
@@ -87,7 +84,7 @@ void	link_pipes(t_pipex *d)
 	}
 }
 
-t_pipex	init(int argc, char **argv, char **envp)
+t_pipex	init(int argc, char **argv)
 {
 	t_pipex d;
 
@@ -121,7 +118,7 @@ int	main(int argc, char **argv, char **envp)
 	}
 	if (!envp || envp[0][0] == '\0')
 		is_error("Envp error", &d);
-	d = init(argc, argv, envp);
+	d = init(argc, argv);
 	start_process(&d, argv, envp);
 	wait_for_child(&d);
 	return (0);
