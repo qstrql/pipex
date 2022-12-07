@@ -6,7 +6,7 @@
 /*   By: mjouot <mjouot@student.42angouleme.fr>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/04 16:15:30 by mjouot            #+#    #+#             */
-/*   Updated: 2022/12/06 11:59:02 by mjouot           ###   ########.fr       */
+/*   Updated: 2022/12/07 15:52:00 by mjouot           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,6 +26,11 @@ void redirect_io(t_pipex *d)
 		dup2(d->fd_io[1], STDOUT_FILENO);
 		dup2(d->pipefd[0], STDIN_FILENO);
 	}
+	else
+		dup2(d->pipefd[d->idx - 1], STDIN_FILENO);
+		dup2(d->pipefd[d->idx], STDOUT_FILENO);
+		
+		
 }
 
 void	child(t_pipex *d, char **envp)
