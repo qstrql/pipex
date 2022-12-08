@@ -6,7 +6,7 @@
 /*   By: mjouot <mjouot@student.42angouleme.fr>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/04 16:15:30 by mjouot            #+#    #+#             */
-/*   Updated: 2022/12/07 15:52:00 by mjouot           ###   ########.fr       */
+/*   Updated: 2022/12/08 21:03:41 by mjouot           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,30 +16,62 @@
 
 void redirect_io(t_pipex *d)
 {
-	if (d->idx == 1)
+	if (d->idx == 0)
 	{
 		dup2(d->fd_io[0], STDIN_FILENO);
 		dup2(d->pipefd[1], STDOUT_FILENO);
 	}
 	else if (d->idx == d->nb_cmds - 1)
 	{
+		dup2(d->pipefd[2 * d->idx - 2], STDIN_FILENO);
 		dup2(d->fd_io[1], STDOUT_FILENO);
-		dup2(d->pipefd[0], STDIN_FILENO);
 	}
 	else
-		dup2(d->pipefd[d->idx - 1], STDIN_FILENO);
-		dup2(d->pipefd[d->idx], STDOUT_FILENO);
-		
-		
+	{
+		dup2(d->pipefd[2 * d->idx - 2], STDIN_FILENO);
+		dup2(d->pipefd[2 * d-> idx + 1], STDOUT_FILENO);
+	}
 }
 
 void	child(t_pipex *d, char **envp)
 {
-		redirect_io(d);
-		close(d->pipefd[1]);
+	int	i;
+
+	i = 0;
+	redirect_io(d);
+	if (d->fd_in[0] != -1)
 		close(d->fd_io[0]);
-		if (!execve(d->path, d->cmd, envp))
-			cant_find_cmd(d->cmd);
+	if (d->fd_in[1] != -1)
+		close(d->fd_io[1]);
+	while (i < (d->nb_cmds - 1) * 2)
+		close(d->pipefd[i++]);
+	if (execve(d->path, d->cmd, envp) < 0)
+		cant_find_cmd(d->cmd);
+}
+
+void	wait_for_child(t_pipex *d)
+{
+	int	status;
+	int	i;
+	pid_t wait_for;
+
+	i = 0;
+	if (d->fd_in[0] != -1)
+		close(d->fd_io[0]);
+	if (d->fd_in[1] != -1)
+		close(d->fd_io[1]);
+	while (i < (d->nb_cmds - 1) * 2)
+		close(d->pipefd[i++]);
+	d->idx -= 1;
+	while (d->idx >= 0)
+	{
+		wait_for = waitpid(d->pid[d->idx], &status, 0);
+		if (wait_for < 0)
+			is_error("waitpid error", d);
+		d->idx--;
+	}
+	free(d->pipefd);
+	free(d->pid);
 }
 
 void	start_process(t_pipex *d, char **argv, char **envp)
@@ -57,23 +89,6 @@ void	start_process(t_pipex *d, char **argv, char **envp)
 		free(d->path);
 		d->idx++;
 	}
-}
-
-void	wait_for_child(t_pipex *d)
-{
-	int	status;
-	pid_t wait_for;
-
-	d->idx -= 1;
-	while (d->idx >= 0)
-	{
-		wait_for = waitpid(d->pid[d->idx], &status, 0);
-		if (wait_for < 0)
-			is_error("waitpid error", d);
-		d->idx--;
-	}
-	free(d->pipefd);
-	free(d->pid);
 }
 
 void	link_pipes(t_pipex *d)
