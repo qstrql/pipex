@@ -6,7 +6,7 @@
 #    By: mjouot <mjouot@student.42angouleme.fr>     +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2022/11/04 16:15:35 by mjouot            #+#    #+#              #
-#    Updated: 2022/12/08 21:00:59 by mjouot           ###   ########.fr        #
+#    Updated: 2022/12/08 21:05:17 by mjouot           ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -47,6 +47,7 @@ clean:
 fclean: clean
 	rm -f libft/libft.a
 	rm -f $(NAME)
+	rm -f $(NAME_BONUS)
 
 re: fclean all
 
