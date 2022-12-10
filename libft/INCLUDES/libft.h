@@ -6,14 +6,13 @@
 /*   By: mjouot <mjouot@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/09/26 16:15:51 by mjouot            #+#    #+#             */
-/*   Updated: 2022/11/23 17:37:33 by mjouot           ###   ########.fr       */
+/*   Updated: 2022/11/02 18:24:54 by mjouot           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #ifndef LIBFT_H
 # define LIBFT_H
 
-# include "ft_printf.h"
 # include <stddef.h>
 # include <stdarg.h>
 
@@ -61,8 +60,6 @@ char	*ft_strtrim(char const *s1, char const *set);
 char	*ft_substr(char const *s, unsigned int start, size_t len);
 int		ft_tolower(int c);
 int		ft_toupper(int c);
-
-//BONUS
 t_list	*ft_lstnew(void *content);
 t_list	*ft_lstlast(t_list *lst);
 int		ft_lstsize(t_list *lst);
@@ -96,8 +93,6 @@ void	ft_putendl(char *s);
 char	*get_next_line(int fd);
 int		ft_intlen(int n);
 int		ft_ishexdigit(int c);
-int		ft_strcmp(const char *s1, const char *s2);
-char	*gnl(int fd);
-t_list	*ft_strs_to_lst(char **strs);
+double	ft_atof(const char *nptr);
 
 #endif

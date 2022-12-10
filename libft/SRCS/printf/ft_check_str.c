@@ -6,11 +6,11 @@
 /*   By: mjouot <mjouot@marvin.42.fr>               +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/10/06 18:29:48 by mjouot            #+#    #+#             */
-/*   Updated: 2022/11/14 22:44:26 by mjouot           ###   ########.fr       */
+/*   Updated: 2022/11/25 12:25:06 by mjouot           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "../../INCLUDES/ft_printf.h"
+#include "../../INCLUDES/libft.h"
 #include <stdarg.h>
 #include <unistd.h>
 
@@ -18,7 +18,6 @@ static int	ft_conversion(char c, va_list args)
 {
 	int	count;
 
-	count = 0;
 	if (c == 'c')
 		return (ft_putchar_r(va_arg(args, int)));
 	else if (c == 's')
@@ -36,7 +35,6 @@ static int	ft_conversion_hexa(char c, va_list args)
 	const char	*hexa_lower = "0123456789abcdef";
 	const char	*hexa_upper = "0123456789ABCDEF";
 
-	count = 0;
 	if (c == 'p')
 		count = ft_printnbr_base(va_arg(args, unsigned long), hexa_lower, c);
 	else if (c == 'x')

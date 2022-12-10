@@ -6,12 +6,11 @@
 /*   By: mjouot <mjouot@marvin.42.fr>               +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/10/08 15:37:09 by mjouot            #+#    #+#             */
-/*   Updated: 2022/10/30 17:06:37 by mjouot           ###   ########.fr       */
+/*   Updated: 2022/11/25 12:25:22 by mjouot           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../../INCLUDES/libft.h"
-#include "../../INCLUDES/ft_printf.h"
 #include <unistd.h>
 
 static int	ft_getcount_hexa(unsigned long n)
