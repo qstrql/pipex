@@ -6,7 +6,7 @@
 /*   By: mjouot <mjouot@student.42angouleme.fr>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/04 16:15:30 by mjouot            #+#    #+#             */
-/*   Updated: 2022/12/08 21:03:41 by mjouot           ###   ########.fr       */
+/*   Updated: 2022/12/09 10:30:36 by mjouot           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -39,9 +39,9 @@ void	child(t_pipex *d, char **envp)
 
 	i = 0;
 	redirect_io(d);
-	if (d->fd_in[0] != -1)
+	if (d->fd_io[0] != -1)
 		close(d->fd_io[0]);
-	if (d->fd_in[1] != -1)
+	if (d->fd_io[1] != -1)
 		close(d->fd_io[1]);
 	while (i < (d->nb_cmds - 1) * 2)
 		close(d->pipefd[i++]);
@@ -56,9 +56,9 @@ void	wait_for_child(t_pipex *d)
 	pid_t wait_for;
 
 	i = 0;
-	if (d->fd_in[0] != -1)
+	if (d->fd_io[0] != -1)
 		close(d->fd_io[0]);
-	if (d->fd_in[1] != -1)
+	if (d->fd_io[1] != -1)
 		close(d->fd_io[1]);
 	while (i < (d->nb_cmds - 1) * 2)
 		close(d->pipefd[i++]);
