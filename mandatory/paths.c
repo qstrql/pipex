@@ -6,7 +6,7 @@
 /*   By: mjouot <mjouot@student.42angouleme.fr>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/12/05 10:23:18 by mjouot            #+#    #+#             */
-/*   Updated: 2022/12/05 10:23:44 by mjouot           ###   ########.fr       */
+/*   Updated: 2022/12/10 17:05:38 by mjouot           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,7 +15,7 @@
 char	**get_paths(char **envp)
 {
 	int		i;
-	char 	**paths;
+	char	**paths;
 
 	i = 0;
 	while (!ft_strnstr(envp[i], "PATH", 4))

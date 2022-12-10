@@ -6,7 +6,7 @@
 /*   By: mjouot <mjouot@student.42angouleme.fr>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/04 16:15:42 by mjouot            #+#    #+#             */
-/*   Updated: 2022/12/05 10:25:17 by mjouot           ###   ########.fr       */
+/*   Updated: 2022/12/10 17:05:19 by mjouot           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,8 +14,8 @@
 # define PIPEX_H
 
 # include "../libft/INCLUDES/libft.h"
-#include <sys/stat.h> //open access
-#include <fcntl.h> //open access
+# include <sys/stat.h> //open access
+# include <fcntl.h> //open access
 # include <unistd.h> //open close read write access dup dup2 execve fork pipe
 # include <sys/types.h> //fork waitpid 
 # include <sys/wait.h> // waitpid

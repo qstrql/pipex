@@ -6,7 +6,7 @@
 /*   By: mjouot <mjouot@student.42angouleme.fr>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/04 16:15:30 by mjouot            #+#    #+#             */
-/*   Updated: 2022/12/05 13:48:16 by mjouot           ###   ########.fr       */
+/*   Updated: 2022/12/10 17:08:03 by mjouot           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,7 +14,7 @@
 
 void	child_two(t_pipex *d)
 {
-	char 	**cmd;
+	char	**cmd;
 
 	d->pid[1] = fork();
 	if (d->pid[1] < 0)
@@ -39,7 +39,7 @@ void	child_two(t_pipex *d)
 
 void	child_one(t_pipex *d)
 {
-	char 	**cmd;
+	char	**cmd;
 
 	d->pid[0] = fork();
 	if (d->pid[0] < 0)
@@ -62,7 +62,7 @@ void	child_one(t_pipex *d)
 	}
 }
 
-void parent(t_pipex *d)
+void	parent(t_pipex *d)
 {
 	int	status;
 
@@ -71,12 +71,12 @@ void parent(t_pipex *d)
 	close(d->pipefd[0]);
 	close(d->pipefd[1]);
 	waitpid(-1, &status, 0);
-    waitpid(-1, &status, 0);
+	waitpid(-1, &status, 0);
 }
 
 t_pipex	init(int argc, char **argv, char **envp)
 {
-	t_pipex d;
+	t_pipex	d;
 
 	d.argc = argc;
 	d.argv = argv;
@@ -84,10 +84,10 @@ t_pipex	init(int argc, char **argv, char **envp)
 	d.nb_cmds = argc - 3;
 	d.fd_io[0] = open(d.argv[1], O_RDONLY);
 	if (d.fd_io[0] < 0)
-			is_error("fd_io error", &d);
+		is_error("fd_io error", &d);
 	d.fd_io[1] = open(d.argv[4], O_WRONLY | O_CREAT | O_TRUNC, 0644);
 	if (d.fd_io[1] < 0)
-			is_error("fd_io error", &d);
+		is_error("fd_io error", &d);
 	ft_bzero(d.pipefd, 2);
 	if (pipe(d.pipefd) < 0)
 		is_error("Pipefd error", &d);
@@ -98,7 +98,7 @@ t_pipex	init(int argc, char **argv, char **envp)
 
 int	main(int argc, char **argv, char **envp)
 {
-	t_pipex d;
+	t_pipex	d;
 
 	if (argc != 5)
 	{
