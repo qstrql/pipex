@@ -6,7 +6,7 @@
 /*   By: mjouot <mjouot@student.42angouleme.fr>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/04 16:15:42 by mjouot            #+#    #+#             */
-/*   Updated: 2022/12/10 17:05:19 by mjouot           ###   ########.fr       */
+/*   Updated: 2022/12/11 16:11:55 by mjouot           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -40,6 +40,7 @@ char	**get_paths(char **envp);
 char	*path(char **envp, char *cmd);
 
 //utils.c
+void	close_fd(t_pipex *d);
 void	is_error(char *str, t_pipex *d);
 void	free_strs(char **strs);
 void	cant_find_cmd(char **cmd);

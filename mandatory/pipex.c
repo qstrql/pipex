@@ -6,11 +6,13 @@
 /*   By: mjouot <mjouot@student.42angouleme.fr>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/04 16:15:30 by mjouot            #+#    #+#             */
-/*   Updated: 2022/12/10 17:08:03 by mjouot           ###   ########.fr       */
+/*   Updated: 2022/12/11 16:12:21 by mjouot           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "pipex.h"
+#include <stdlib.h>
+#include <unistd.h>
 
 void	child_two(t_pipex *d)
 {
@@ -25,15 +27,13 @@ void	child_two(t_pipex *d)
 		close(d->pipefd[1]);
 		dup2(d->fd_io[1], STDOUT_FILENO);
 		dup2(d->pipefd[0], STDIN_FILENO);
+		close_fd(d);
 		if (cmd[0] != NULL && path(d->envp, cmd[0]))
-		{
-			close(d->pipefd[0]);
-			close(d->fd_io[1]);
 			execve(path(d->envp, cmd[0]), cmd, d->envp);
-			free_strs(cmd);
-		}
 		else
 			write(2, "Command not found\n", 18);
+		free_strs(cmd);
+		exit(EXIT_FAILURE);
 	}
 }
 
@@ -47,31 +47,25 @@ void	child_one(t_pipex *d)
 	if (d->pid[0] == 0)
 	{
 		cmd = ft_split(d->argv[2], ' ');
-		close(d->pipefd[0]);
 		dup2(d->fd_io[0], STDIN_FILENO);
 		dup2(d->pipefd[1], STDOUT_FILENO);
+		close_fd(d);
 		if (cmd[0] != NULL && path(d->envp, cmd[0]))
-		{
-			close(d->pipefd[1]);
-			close(d->fd_io[0]);
 			execve(path(d->envp, cmd[0]), cmd, d->envp);
-			free_strs(cmd);
-		}
 		else
 			cant_find_cmd(cmd);
+		free_strs(cmd);
+		exit(EXIT_FAILURE);
 	}
 }
 
 void	parent(t_pipex *d)
 {
-	int	status;
-
 	child_one(d);
 	child_two(d);
-	close(d->pipefd[0]);
-	close(d->pipefd[1]);
-	waitpid(-1, &status, 0);
-	waitpid(-1, &status, 0);
+	close_fd(d);
+	waitpid(-1, NULL, 0);
+	waitpid(-1, NULL, 0);
 }
 
 t_pipex	init(int argc, char **argv, char **envp)

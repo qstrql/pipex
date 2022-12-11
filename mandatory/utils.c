@@ -6,12 +6,20 @@
 /*   By: mjouot <mjouot@student.42angouleme.fr>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/22 11:40:05 by mjouot            #+#    #+#             */
-/*   Updated: 2022/12/10 17:06:41 by mjouot           ###   ########.fr       */
+/*   Updated: 2022/12/11 16:11:34 by mjouot           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "pipex.h"
 #include <string.h>
+
+void	close_fd(t_pipex *d)
+{
+	close(d->pipefd[0]);
+	close(d->pipefd[1]);
+	close(d->fd_io[0]);
+	close(d->fd_io[1]);
+}
 
 void	free_strs(char **strs)
 {
