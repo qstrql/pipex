@@ -6,7 +6,7 @@
 /*   By: mjouot <mjouot@student.42angouleme.fr>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/04 16:15:30 by mjouot            #+#    #+#             */
-/*   Updated: 2022/12/10 18:22:04 by mjouot           ###   ########.fr       */
+/*   Updated: 2022/12/12 18:32:29 by mjouot           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -91,18 +91,6 @@ void	start_process(t_pipex *d, char **argv, char **envp)
 	}
 }
 
-void	link_pipes(t_pipex *d)
-{
-	int	i;
-
-	i = 0;
-	while (i < d->nb_cmds - 1)
-	{
-		if (pipe(d->pipefd + 2 * i) < 0)
-			is_error("pipefd linking error", d);
-		i++;
-	}
-}
 
 t_pipex	init(int argc, char **argv)
 {
@@ -121,7 +109,6 @@ t_pipex	init(int argc, char **argv)
 	d.pid = ft_calloc(d.nb_cmds - 1, sizeof(d.pid));
 	if (!d.pid)
 		is_error("pid error", &d);
-	link_pipes(&d);
 	d.idx = 0;
 	return (d);
 }
