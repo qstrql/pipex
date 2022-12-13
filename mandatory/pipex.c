@@ -6,7 +6,7 @@
 /*   By: mjouot <mjouot@student.42angouleme.fr>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/04 16:15:30 by mjouot            #+#    #+#             */
-/*   Updated: 2022/12/13 13:14:03 by mjouot           ###   ########.fr       */
+/*   Updated: 2022/12/13 18:19:48 by mjouot           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,7 +19,6 @@ void	child_two(t_pipex *d)
 	char	**cmd;
 
 	cmd = ft_split(d->argv[3], ' ');
-	close(d->pipefd[1]);
 	dup2(d->fd_io[1], STDOUT_FILENO);
 	dup2(d->pipefd[0], STDIN_FILENO);
 	close_fd(d);
@@ -57,14 +56,15 @@ void	parent(t_pipex *d)
 		is_error("fork", d);
 	if (child1 == 0)
 		child_one(d);
+	close(d->pipefd[1]);
 	child2 = fork();
 	if (child2 < 0)
 		is_error("fork", d);
 	if (child2 == 0)
 		child_two(d);
+	waitpid(child1, NULL, 0);
+	waitpid(child2, NULL, 0);
 	close_fd(d);
-	waitpid(-1, NULL, 0);
-	waitpid(-1, NULL, 0);
 }
 
 t_pipex	init(int argc, char **argv, char **envp)
