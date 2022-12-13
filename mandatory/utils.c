@@ -6,7 +6,7 @@
 /*   By: mjouot <mjouot@student.42angouleme.fr>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/22 11:40:05 by mjouot            #+#    #+#             */
-/*   Updated: 2022/12/11 16:11:34 by mjouot           ###   ########.fr       */
+/*   Updated: 2022/12/13 12:55:26 by mjouot           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,10 +15,14 @@
 
 void	close_fd(t_pipex *d)
 {
-	close(d->pipefd[0]);
-	close(d->pipefd[1]);
-	close(d->fd_io[0]);
-	close(d->fd_io[1]);
+	if (d->fd_io[0] != -1)
+		close(d->fd_io[0]);
+	if (d->fd_io[1] != -1)
+		close(d->fd_io[1]);
+	if (d->pipefd[0] != -1)
+		close(d->fd_io[0]);
+	if (d->pipefd[1] != -1)
+		close(d->fd_io[1]);
 }
 
 void	free_strs(char **strs)
@@ -36,18 +40,14 @@ void	free_strs(char **strs)
 
 void	is_error(char *str, t_pipex *d)
 {
-	int	i;
-
-	i = 0;
-	if (d)
-	{	
-		while (i < (d->nb_cmds - 1) * 2)
-			close(d->pipefd[i++]);
-		if (d->fd_io[0] != -1)
-			close(d->fd_io[0]);
-		if (d->fd_io[1] != -1)
-			close(d->fd_io[1]);
-	}
+	if (d->pipefd[0] != -1)
+		close(d->fd_io[0]);
+	if (d->pipefd[1] != -1)
+		close(d->fd_io[1]);
+	if (d->fd_io[0] != -1)
+		close(d->fd_io[0]);
+	if (d->fd_io[1] != -1)
+		close(d->fd_io[1]);
 	perror(str);
 	exit(EXIT_FAILURE);
 }

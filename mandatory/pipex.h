@@ -6,7 +6,7 @@
 /*   By: mjouot <mjouot@student.42angouleme.fr>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/04 16:15:42 by mjouot            #+#    #+#             */
-/*   Updated: 2022/12/11 16:11:55 by mjouot           ###   ########.fr       */
+/*   Updated: 2022/12/13 13:13:43 by mjouot           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,7 +32,6 @@ typedef struct s_pipex
 	int		nb_cmds;
 	int		fd_io[2];
 	int		pipefd[2];
-	int		pid[2];
 	int		idx;
 }		t_pipex;
 //paths.c

@@ -6,7 +6,7 @@
 /*   By: mjouot <mjouot@student.42angouleme.fr>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/04 16:15:30 by mjouot            #+#    #+#             */
-/*   Updated: 2022/12/11 16:12:21 by mjouot           ###   ########.fr       */
+/*   Updated: 2022/12/13 13:14:03 by mjouot           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,51 +18,50 @@ void	child_two(t_pipex *d)
 {
 	char	**cmd;
 
-	d->pid[1] = fork();
-	if (d->pid[1] < 0)
-		is_error("fork", d);
-	if (d->pid[1] == 0)
-	{
-		cmd = ft_split(d->argv[3], ' ');
-		close(d->pipefd[1]);
-		dup2(d->fd_io[1], STDOUT_FILENO);
-		dup2(d->pipefd[0], STDIN_FILENO);
-		close_fd(d);
-		if (cmd[0] != NULL && path(d->envp, cmd[0]))
-			execve(path(d->envp, cmd[0]), cmd, d->envp);
-		else
-			write(2, "Command not found\n", 18);
-		free_strs(cmd);
-		exit(EXIT_FAILURE);
-	}
+	cmd = ft_split(d->argv[3], ' ');
+	close(d->pipefd[1]);
+	dup2(d->fd_io[1], STDOUT_FILENO);
+	dup2(d->pipefd[0], STDIN_FILENO);
+	close_fd(d);
+	if (cmd[0] != NULL && path(d->envp, cmd[0]))
+		execve(path(d->envp, cmd[0]), cmd, d->envp);
+	else
+		cant_find_cmd(cmd);
+	free_strs(cmd);
+	exit(EXIT_FAILURE);
 }
 
 void	child_one(t_pipex *d)
 {
 	char	**cmd;
 
-	d->pid[0] = fork();
-	if (d->pid[0] < 0)
-		is_error("fork", d);
-	if (d->pid[0] == 0)
-	{
-		cmd = ft_split(d->argv[2], ' ');
-		dup2(d->fd_io[0], STDIN_FILENO);
-		dup2(d->pipefd[1], STDOUT_FILENO);
-		close_fd(d);
-		if (cmd[0] != NULL && path(d->envp, cmd[0]))
-			execve(path(d->envp, cmd[0]), cmd, d->envp);
-		else
-			cant_find_cmd(cmd);
-		free_strs(cmd);
-		exit(EXIT_FAILURE);
-	}
+	cmd = ft_split(d->argv[2], ' ');
+	dup2(d->fd_io[0], STDIN_FILENO);
+	dup2(d->pipefd[1], STDOUT_FILENO);
+	close_fd(d);
+	if (cmd[0] != NULL && path(d->envp, cmd[0]))
+		execve(path(d->envp, cmd[0]), cmd, d->envp);
+	else
+		cant_find_cmd(cmd);
+	free_strs(cmd);
+	exit(EXIT_FAILURE);
 }
 
 void	parent(t_pipex *d)
 {
-	child_one(d);
-	child_two(d);
+	pid_t child1;
+	pid_t child2;
+
+	child1 = fork();
+	if (child1 < 0)
+		is_error("fork", d);
+	if (child1 == 0)
+		child_one(d);
+	child2 = fork();
+	if (child2 < 0)
+		is_error("fork", d);
+	if (child2 == 0)
+		child_two(d);
 	close_fd(d);
 	waitpid(-1, NULL, 0);
 	waitpid(-1, NULL, 0);
@@ -78,14 +77,19 @@ t_pipex	init(int argc, char **argv, char **envp)
 	d.nb_cmds = argc - 3;
 	d.fd_io[0] = open(d.argv[1], O_RDONLY);
 	if (d.fd_io[0] < 0)
-		is_error("fd_io error", &d);
+	{
+		perror("fd io error ");
+		exit(EXIT_FAILURE);
+	}	
 	d.fd_io[1] = open(d.argv[4], O_WRONLY | O_CREAT | O_TRUNC, 0644);
-	if (d.fd_io[1] < 0)
-		is_error("fd_io error", &d);
-	ft_bzero(d.pipefd, 2);
+	if (d.fd_io[1] < 0)	
+	{
+		close(d.fd_io[0]);
+		perror("fd io error ");
+		exit(EXIT_FAILURE);
+	}	
 	if (pipe(d.pipefd) < 0)
 		is_error("Pipefd error", &d);
-	ft_bzero(d.pid, 2);
 	d.idx = 0;
 	return (d);
 }
