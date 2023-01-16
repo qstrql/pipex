@@ -6,7 +6,7 @@
 /*   By: mjouot <mjouot@student.42angouleme.fr>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/04 16:15:30 by mjouot            #+#    #+#             */
-/*   Updated: 2022/12/20 11:38:06 by mjouot           ###   ########.fr       */
+/*   Updated: 2023/01/16 23:43:43 by mjouot           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,98 +14,74 @@
 #include <stdlib.h>
 #include <unistd.h>
 
-void	child_two(t_pipex *d)
+void	child_one(int *fd, int *pipefd, char **argv, char **envp)
 {
+	pid_t	pid;
 	char	**cmd;
 
-	cmd = ft_split(d->argv[3], ' ');
-	dup2(d->fd_io[1], STDOUT_FILENO);
-	dup2(d->pipefd[0], STDIN_FILENO);	
-	close(d->fd_io[0]);
-	close(d->fd_io[1]);
-	close(d->pipefd[1]);
-	close(d->pipefd[0]);
-	if (cmd[0] != NULL && path(d->envp, cmd[0]))
-		execve(path(d->envp, cmd[0]), cmd, d->envp);
-	else
-		cant_find_cmd(cmd, d);
-	free_strs(cmd);
-	exit(EXIT_FAILURE);
+	pid = fork();
+	if (pid < 0)
+		is_error("Fork error");
+	if (pid == 0)
+	{
+		fd[0] = open(argv[1], O_RDONLY);
+		if (fd[0] < 0)
+			is_error(argv[1]);
+		cmd = ft_split(argv[2], ' ');
+		close(pipefd[0]);
+		dup2(fd[0], STDIN_FILENO);
+		dup2(pipefd[1], STDOUT_FILENO);
+		if (cmd[0] != NULL && path(envp, cmd[0]))
+		{
+			execve(path(envp, cmd[0]), cmd, envp);
+			free_strs(cmd);
+		}
+		else
+			cant_find_cmd(cmd);
+	}
 }
 
-void	child_one(t_pipex *d)
+void	child_two(int *fd, int *pipefd, char **argv, char **envp)
 {
+	pid_t	pid;
 	char	**cmd;
 
-	cmd = ft_split(d->argv[2], ' ');
-	dup2(d->fd_io[0], STDIN_FILENO);
-	dup2(d->pipefd[1], STDOUT_FILENO);
-	close(d->fd_io[0]);
-	close(d->fd_io[1]);
-	close(d->pipefd[0]);
-	close(d->pipefd[1]);
-	if (cmd[0] != NULL && path(d->envp, cmd[0]))
-		execve(path(d->envp, cmd[0]), cmd, d->envp);
-	else
-		cant_find_cmd(cmd, d);
-	free_strs(cmd);
-	exit(EXIT_FAILURE);
+	pid = fork();
+	if (pid < 0)
+		is_error("Fork error");
+	if (pid == 0)
+	{
+		fd[1] = open(argv[4], O_WRONLY | O_CREAT | O_TRUNC, 0644);
+		if (fd[1] < 0)
+			is_error(argv[4]);
+		cmd = ft_split(argv[3], ' ');
+		close(pipefd[1]);
+		dup2(fd[1], STDOUT_FILENO);
+		dup2(pipefd[0], STDIN_FILENO);
+		if (cmd[0] != NULL && path(envp, cmd[0]))
+		{
+			execve(path(envp, cmd[0]), cmd, envp);
+			free_strs(cmd);
+		}
+		else
+			cant_find_cmd(cmd);
+	}
 }
 
-void	parent(t_pipex *d)
+void	pipex_process(int *fd, int *pipefd, char **argv, char **envp)
 {
-	pid_t child1;
-	pid_t child2;
-
-	child1 = fork();
-	if (child1 < 0)
-		is_error("fork", d);
-	if (child1 == 0)
-		child_one(d);
-	close(d->pipefd[1]);
-	child2 = fork();
-	if (child2 < 0)
-		is_error("fork", d);
-	if (child2 == 0)
-		child_two(d);
-	close(d->fd_io[0]);
-	close(d->fd_io[1]);
-	close(d->pipefd[0]);
-	close(d->pipefd[1]);
-	waitpid(child1, NULL, 0);
-	waitpid(child2, NULL, 0);
-}
-
-t_pipex	init(int argc, char **argv, char **envp)
-{
-	t_pipex	d;
-
-	d.argc = argc;
-	d.argv = argv;
-	d.envp = envp;
-	d.nb_cmds = argc - 3;
-	d.fd_io[0] = open(d.argv[1], O_RDONLY);
-	if (d.fd_io[0] < 0)
-	{
-		perror("fd io error ");
-		exit(EXIT_FAILURE);
-	}	
-	d.fd_io[1] = open(d.argv[4], O_WRONLY | O_CREAT | O_TRUNC, 0644);
-	if (d.fd_io[1] < 0)	
-	{
-		close(d.fd_io[0]);
-		perror("fd io error ");
-		exit(EXIT_FAILURE);
-	}	
-	if (pipe(d.pipefd) < 0)
-		is_error("Pipefd error", &d);
-	d.idx = 0;
-	return (d);
+	child_one(fd, pipefd, argv, envp);
+	child_two(fd, pipefd, argv, envp);
+	close(pipefd[0]);
+	close(pipefd[1]);
+	waitpid(-1, NULL, 0);
+	waitpid(-1, NULL, 0);
 }
 
 int	main(int argc, char **argv, char **envp)
 {
-	t_pipex	d;
+	int	fd[2];
+	int	pipefd[2];
 
 	if (argc != 5)
 	{
@@ -113,8 +89,9 @@ int	main(int argc, char **argv, char **envp)
 		return (0);
 	}
 	if (!envp || envp[0][0] == '\0')
-		is_error("Envp error", &d);
-	d = init(argc, argv, envp);
-	parent(&d);
+		is_error("Envp error");
+	if (pipe(pipefd) < 0)
+		is_error("Pipefd error");
+	pipex_process(fd, pipefd, argv, envp);
 	return (0);
 }
