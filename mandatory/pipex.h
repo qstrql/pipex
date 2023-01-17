@@ -6,7 +6,7 @@
 /*   By: mjouot <mjouot@student.42angouleme.fr>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/04 16:15:42 by mjouot            #+#    #+#             */
-/*   Updated: 2023/01/17 12:50:51 by mjouot           ###   ########.fr       */
+/*   Updated: 2023/01/17 15:13:07 by mjouot           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,7 +26,6 @@
 
 //paths.c
 char	**get_paths(char **envp);
-char	*ft_realloc(char *joined, char *argv);
 char	*path(char **envp, char *cmd);
 
 //utils.c
