@@ -6,7 +6,7 @@
 /*   By: mjouot <mjouot@student.42angouleme.fr>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/04 16:15:30 by mjouot            #+#    #+#             */
-/*   Updated: 2023/01/16 23:43:43 by mjouot           ###   ########.fr       */
+/*   Updated: 2023/01/17 14:25:19 by mjouot           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,9 +14,30 @@
 #include <stdlib.h>
 #include <unistd.h>
 
+void	dup_and_close(int fd, int *pipefd, int process)
+{
+	if (process == 1)
+	{
+		dup2(fd, STDIN_FILENO);
+		dup2(pipefd[1], STDOUT_FILENO);
+		close(pipefd[0]);
+		close(pipefd[1]);
+		close(fd);
+	}
+	else if (process == 2)
+	{
+		dup2(fd, STDOUT_FILENO);
+		dup2(pipefd[0], STDIN_FILENO);
+		close(pipefd[0]);
+		close(pipefd[1]);
+		close(fd);
+	}
+}
+
 void	child_one(int *fd, int *pipefd, char **argv, char **envp)
 {
 	pid_t	pid;
+	char 	*tmp;
 	char	**cmd;
 
 	pid = fork();
@@ -28,22 +49,24 @@ void	child_one(int *fd, int *pipefd, char **argv, char **envp)
 		if (fd[0] < 0)
 			is_error(argv[1]);
 		cmd = ft_split(argv[2], ' ');
-		close(pipefd[0]);
-		dup2(fd[0], STDIN_FILENO);
-		dup2(pipefd[1], STDOUT_FILENO);
-		if (cmd[0] != NULL && path(envp, cmd[0]))
+		tmp = path(envp, cmd[0]);
+		if (cmd[0] != NULL && tmp)
 		{
-			execve(path(envp, cmd[0]), cmd, envp);
-			free_strs(cmd);
+			dup_and_close(fd[0], pipefd, 1);
+			execve(tmp, cmd, envp);
 		}
 		else
-			cant_find_cmd(cmd);
+		{
+			free(tmp);
+			cant_find_cmd(fd[0], pipefd, cmd);
+		}
 	}
 }
 
 void	child_two(int *fd, int *pipefd, char **argv, char **envp)
 {
 	pid_t	pid;
+	char 	*tmp;
 	char	**cmd;
 
 	pid = fork();
@@ -55,16 +78,17 @@ void	child_two(int *fd, int *pipefd, char **argv, char **envp)
 		if (fd[1] < 0)
 			is_error(argv[4]);
 		cmd = ft_split(argv[3], ' ');
-		close(pipefd[1]);
-		dup2(fd[1], STDOUT_FILENO);
-		dup2(pipefd[0], STDIN_FILENO);
-		if (cmd[0] != NULL && path(envp, cmd[0]))
+		tmp = path(envp, cmd[0]);
+		if (cmd[0] != NULL && tmp)
 		{
-			execve(path(envp, cmd[0]), cmd, envp);
-			free_strs(cmd);
+			dup_and_close(fd[1], pipefd, 2);
+			execve(tmp, cmd, envp);
 		}
 		else
-			cant_find_cmd(cmd);
+		{
+			free(tmp);
+			cant_find_cmd(fd[1], pipefd, cmd);
+		}
 	}
 }
 

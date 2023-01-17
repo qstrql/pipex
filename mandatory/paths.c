@@ -6,7 +6,7 @@
 /*   By: mjouot <mjouot@student.42angouleme.fr>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/12/05 10:23:18 by mjouot            #+#    #+#             */
-/*   Updated: 2023/01/16 23:34:32 by mjouot           ###   ########.fr       */
+/*   Updated: 2023/01/17 14:23:03 by mjouot           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -35,7 +35,7 @@ char	*path(char **envp, char *cmd)
 	while (paths[i])
 	{
 		path = ft_strjoin(paths[i], "/");
-		path = ft_strjoin(path, cmd);
+		path = ft_strjoinf(path, cmd);
 		if (!access(path, F_OK))
 		{
 			free_strs(paths);

@@ -6,7 +6,7 @@
 #    By: mjouot <marvin@42.fr>                      +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2022/10/05 16:46:46 by mjouot            #+#    #+#              #
-#    Updated: 2022/12/08 13:36:23 by mjouot           ###   ########.fr        #
+#    Updated: 2023/01/17 14:22:50 by mjouot           ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 #=================================VARS=========================================#
@@ -40,6 +40,7 @@ SRCS = \
     SRCS/libft/ft_strncmp.c \
     SRCS/libft/ft_substr.c \
     SRCS/libft/ft_strjoin.c \
+    SRCS/libft/ft_strjoinf.c \
     SRCS/libft/ft_strtrim.c \
     SRCS/libft/ft_strmapi.c \
     SRCS/libft/ft_striteri.c \

@@ -1,16 +1,17 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   ft_strjoin.c                                       :+:      :+:    :+:   */
+/*   ft_strjoinf.c                                      :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: mjouot <mjouot@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/09/26 18:39:14 by mjouot            #+#    #+#             */
-/*   Updated: 2023/01/17 14:21:53 by mjouot           ###   ########.fr       */
+/*   Updated: 2023/01/17 14:21:39 by mjouot           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../../INCLUDES/libft.h"
+#include <stdlib.h>
 
 static char	*ft_strcat(char *dest, char *src)
 {
@@ -28,7 +29,7 @@ static char	*ft_strcat(char *dest, char *src)
 	return (dest);
 }
 
-char	*ft_strjoin(char const *s1, char const *s2)
+char	*ft_strjoinf(char *s1, char *s2)
 {
 	int		len;
 	char	*strs;
@@ -41,5 +42,6 @@ char	*ft_strjoin(char const *s1, char const *s2)
 		return (NULL);
 	strs = ft_strcat(strs, (char *)s1);
 	strs = ft_strcat(strs, (char *)s2);
+	free(s1);
 	return (strs);
 }

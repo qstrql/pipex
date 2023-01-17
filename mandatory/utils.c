@@ -6,7 +6,7 @@
 /*   By: mjouot <mjouot@student.42angouleme.fr>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/22 11:40:05 by mjouot            #+#    #+#             */
-/*   Updated: 2023/01/16 23:33:19 by mjouot           ###   ########.fr       */
+/*   Updated: 2023/01/17 12:45:53 by mjouot           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,8 +32,11 @@ void	is_error(char *str)
 	exit(EXIT_FAILURE);
 }
 
-void	cant_find_cmd(char **cmd)
-{
+void	cant_find_cmd(int fd, int *pipefd, char **cmd)
+{	
+	close(pipefd[0]);
+	close(pipefd[1]);
+	close(fd);
 	free_strs(cmd);
 	write(2, "Command not found\n", 18);
 	exit(EXIT_FAILURE);
