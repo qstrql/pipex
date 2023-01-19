@@ -6,7 +6,7 @@
 /*   By: mjouot <mjouot@student.42angouleme.fr>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/04 16:15:30 by mjouot            #+#    #+#             */
-/*   Updated: 2023/01/17 16:19:14 by mjouot           ###   ########.fr       */
+/*   Updated: 2023/01/19 16:30:29 by mjouot           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,8 +14,27 @@
 #include <sys/wait.h>
 #include <unistd.h>
 
+void redirect_io(t_pipex *d)
+{
+	if (d->idx = 0)
+	{	
+		dup2(d->fd, STDIN_FILENO);
+		dup2(d->pipefd[1], STDOUT_FILENO);
+	}
+	else if (d->idx = d->nb_cmds)
+	{
+		dup2(d->fd, STDOUT_FILENO);
+		dup2(d->pipefd[0], STDIN_FILENO);
+	}
+	else 
+	{
+			
+	}
+}
+
 void	child(t_pipex *d, char **envp)
 {
+	redirect_io(d);
 	if (d->cmd[0] != NULL && d->path)
 		execve(d->path, d->cmd, envp);
 	else
@@ -38,7 +57,6 @@ void	start_process(t_pipex *d, char **argv, char **envp)
 		d->idx++;
 	}
 }
-
 
 t_pipex	init(int argc, char **argv)
 {
