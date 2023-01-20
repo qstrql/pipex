@@ -6,67 +6,67 @@
 /*   By: mjouot <mjouot@student.42angouleme.fr>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/04 16:15:30 by mjouot            #+#    #+#             */
-/*   Updated: 2023/01/19 16:30:29 by mjouot           ###   ########.fr       */
+/*   Updated: 2023/01/20 20:27:27 by mjouot           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "pipex_bonus.h"
-#include <sys/wait.h>
-#include <unistd.h>
 
-void redirect_io(t_pipex *d)
+void	here_doc(char *argv, t_pipex *d)
 {
-	if (d->idx = 0)
-	{	
-		dup2(d->fd, STDIN_FILENO);
-		dup2(d->pipefd[1], STDOUT_FILENO);
-	}
-	else if (d->idx = d->nb_cmds)
+	int		here_doc;
+	char	*buf;
+
+	here_doc = open(".heredoc_tmp", O_CREAT | O_WRONLY | O_TRUNC, 0644);
+	if (here_doc < 0)
+		is_error("heredoc error", &d);
+	while (1)
 	{
-		dup2(d->fd, STDOUT_FILENO);
-		dup2(d->pipefd[0], STDIN_FILENO);
+		write(1, "heredoc> ", 9);
+		if (get_next_line(0, &buf) < 0)
+			exit(1);
+		if (!ft_strncmp(argv, buf, ft_strlen(argv) + 1))
+			break ;
+		write(here_doc, buf, ft_strlen(buf));
+		write(here_doc, "\n", 1);
+		free(buf);
 	}
-	else 
+	free(buf);
+	close(here_doc);
+	d.fd_io[0] = open(".heredoc_tmp", O_RDONLY);
+	if (d->fd_io[0] < 0)
 	{
-			
+		unlink(".heredoc_tmp");
+		is_error("heredoc error", &d);
 	}
 }
 
-void	child(t_pipex *d, char **envp)
+int	check_heredoc(char *here_doc)
 {
-	redirect_io(d);
-	if (d->cmd[0] != NULL && d->path)
-		execve(d->path, d->cmd, envp);
+	if (here_doc && !ft_strncmp("here_doc", here_doc, 9))
+		return (1);
 	else
-		cant_find_cmd(d->cmd, d);
-}
-
-void	start_process(t_pipex *d, char **argv, char **envp)
-{
-	if (pipe(d->pipefd) == -1)
-		is_error("pipefd error", d);
-	while (d->idx < d->nb_cmds)
-	{
-		d->cmd = ft_split(argv[d->idx + 2], ' ');
-		d->path = path(envp, d->cmd[d->idx + 2]);
-		d->pid[d->idx] = fork();
-		if (d->pid[d->idx] == 0)
-			child(d, envp);
-		free_strs(d->cmd);
-		free(d->path);
-		d->idx++;
-	}
+		return (0);
 }
 
 t_pipex	init(int argc, char **argv)
 {
 	t_pipex d;
 
-	d.nb_cmds = argc - 3;
-	d.fd[0] = open(argv[1], O_RDONLY);
-	if (d.fd[0] < 0)
-			is_error("fd_io error", &d);
-	d.fd[1] = open(argv[argc - 1], O_WRONLY | O_CREAT | O_TRUNC, 0644);
+	d.here_doc = check_heredoc(argv[1]);
+	d.nb_cmds = argc - 3 - d.here_doc;
+	if (d.here_doc == 1)
+		here_doc(argv[2], &d)
+	else
+	{
+		d.fd[0] = open(argv[1], O_RDONLY);
+		if (d.fd[0] < 0)
+				is_error("fd_io error", &d);
+	}
+	if (d.here_doc == 1)
+		d.fd[1] = open(argv, O_WRONLY | O_CREAT | O_APPEND, 0644);
+	else
+		d.fd[1] = open(argv[argc - 1], O_WRONLY | O_CREAT | O_TRUNC, 0644);
 	if (d.fd[1] < 0)
 			is_error("fd_io error", &d);
 	d.pid = ft_calloc(d.nb_cmds - 1, sizeof(d.pid));
