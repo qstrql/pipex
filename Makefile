@@ -6,7 +6,7 @@
 #    By: mjouot <mjouot@student.42angouleme.fr>     +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2022/11/04 16:15:35 by mjouot            #+#    #+#              #
-#    Updated: 2022/12/13 18:24:03 by mjouot           ###   ########.fr        #
+#    Updated: 2023/01/24 14:45:25 by mjouot           ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 #=================================VARS=========================================#
@@ -48,7 +48,6 @@ PROGRESS_BAR_DETAIL = 5
 all: $(NAME)
 
 $(NAME): $(OBJS)
-		touch infile
 		@rm .progressbar
 		make -C libft
 		$(CC) $(FLAGS) $^ -o $(NAME) libft/libft.a
@@ -84,7 +83,6 @@ bonus: $(OBJS_BONUS)
 		$(CC) $(FLAGS) $(OBJS_BONUS) -o $(NAME_BONUS) libft/libft.a
 
 clean:
-	rm infile outfile
 	make clean -C libft
 	rm -f $(OBJS_BONUS)
 	rm -f $(OBJS)

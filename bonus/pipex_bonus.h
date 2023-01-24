@@ -6,7 +6,7 @@
 /*   By: mjouot <mjouot@student.42angouleme.fr>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/04 16:15:42 by mjouot            #+#    #+#             */
-/*   Updated: 2023/01/20 20:09:48 by mjouot           ###   ########.fr       */
+/*   Updated: 2023/01/24 15:45:56 by mjouot           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,13 +28,18 @@ typedef struct s_pipex
 {
 	int		nb_cmds;
 	int		fd[2];
-	int		pipefd[2];
+	int		pipe[2];
+	int		pipebis[2];
 	int		here_doc;
 	pid_t	pid;
 	char 	**cmd;
 	char 	*path;
 	int		idx;
 }		t_pipex;
+
+//here_doc_bonus.c
+void	here_doc(char *delimiter, t_pipex *d);
+int	check_heredoc(char *here_doc);
 
 //paths_bonus.c
 char	**get_paths(char **envp);
