@@ -6,11 +6,14 @@
 /*   By: mjouot <mjouot@student.42angouleme.fr>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/04 16:15:30 by mjouot            #+#    #+#             */
-/*   Updated: 2023/01/24 15:14:45 by mjouot           ###   ########.fr       */
+/*   Updated: 2023/01/27 16:00:56 by mjouot           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "pipex_bonus.h"
+#include <fcntl.h>
+#include <sys/wait.h>
+#include <unistd.h>
 
 t_pipex	init(int argc, char **argv)
 {
@@ -36,9 +39,87 @@ t_pipex	init(int argc, char **argv)
 	return (d);
 }
 
+void	even_or_odd(t_pipex *d)
+{
+	if (d->idx % 2 == 0)
+	{
+		close(d->pipeA[READ]);
+		close(d->pipeB[WRITE]);
+		dup2(d->pipeA[READ], STDIN_FILENO);
+    	dup2(d->pipeB[WRITE], STDOUT_FILENO);
+	}
+	else if (d->idx % 2 != 0)
+	{
+		close(d->pipeB[READ]);
+		close(d->pipeA[WRITE]);
+		dup2(d->pipeB[READ], STDIN_FILENO);
+		dup2(d->pipeA[WRITE], STDOUT_FILENO);
+	}
+}
+
+void	redirect_io(t_pipex *d)
+{
+	if (d->idx == 0)
+	{
+		close(d->pipeB[WRITE]);
+		dup2(d->pipeB[WRITE], STDOUT_FILENO);
+	}
+	else if (d->idx == d->nb_cmds)
+	{
+		if (d->idx % 2 == 0)
+		{	
+			close(d->pipeB[WRITE]);
+			dup2(d->pipeB[READ], STDIN_FILENO);
+		}
+		else
+		{	    
+			close(d->pipeA[WRITE]);
+			dup2(d->pipeA[READ], STDIN_FILENO); 
+		}
+	}
+	else
+		even_or_odd(d);
+}
+
+void	child(t_pipex *d, char **argv, char **envp)
+{
+	char 	*tmp;
+	char	**cmd;
+
+	cmd = ft_split(argv[d->idx + 2], ' ');
+	tmp = path(envp, cmd[0]);
+	if (cmd[0] != NULL && tmp)
+	{
+		redirect_io(d);
+		execve(tmp, cmd, envp);
+	}
+	else
+	{
+		free(tmp);
+	 	cant_find_cmd(cmd, d);
+	}
+}
+
 void	start_process(t_pipex *d, char **argv, char **envp)
 {
-	
+	pid_t pid;
+
+	while (d->idx < d->nb_cmds)
+	{
+		if (d->idx % 2 == 0)
+			if (pipe(d->pipeB) < 0)
+				is_error("Pipefd error", d);
+		if (d->idx % 2 != 0)
+			if (pipe(d->pipeA) < 0)
+				is_error("Pipefd error", d);
+		pid = fork();
+		if (pid < 0)
+			is_error("Fork error", d);
+		if (pid == 0)
+			child(d, argv, envp);
+		waitpid(pid, NULL, 0);
+		d->idx++;
+	}
 }
 
 int	main(int argc, char **argv, char **envp)

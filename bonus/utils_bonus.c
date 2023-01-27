@@ -6,7 +6,7 @@
 /*   By: mjouot <mjouot@student.42angouleme.fr>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/22 11:40:05 by mjouot            #+#    #+#             */
-/*   Updated: 2023/01/17 15:14:23 by mjouot           ###   ########.fr       */
+/*   Updated: 2023/01/27 13:47:40 by mjouot           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,12 +27,14 @@ void	free_strs(char **strs)
 
 void	is_error(char *str, t_pipex *d)
 {
+	(void)d;
 	perror(str);
 	exit(EXIT_FAILURE);
 }
 
 void	cant_find_cmd(char **cmd, t_pipex *d)
 {	
+	(void)d;
 	free_strs(cmd);
 	write(2, "Command not found\n", 18);
 	exit(EXIT_FAILURE);

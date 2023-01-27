@@ -6,7 +6,7 @@
 #    By: mjouot <mjouot@student.42angouleme.fr>     +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2022/11/04 16:15:35 by mjouot            #+#    #+#              #
-#    Updated: 2023/01/24 14:45:25 by mjouot           ###   ########.fr        #
+#    Updated: 2023/01/27 13:46:50 by mjouot           ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 #=================================VARS=========================================#
@@ -19,7 +19,9 @@ SRCS = mandatory/pipex.c \
 
 SRCS_BONUS = bonus/pipex_bonus.c \
 			 bonus/utils_bonus.c \
-			 bonus/paths_bonus.c
+			 bonus/paths_bonus.c \
+			 bonus/here_doc_bonus.c
+
 CC = clang
 OBJS = $(SRCS:.c=.o)
 OBJS_BONUS = $(SRCS_BONUS:.c=.o)

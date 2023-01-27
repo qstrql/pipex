@@ -6,7 +6,7 @@
 /*   By: mjouot <mjouot@student.42angouleme.fr>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/01/24 15:11:16 by mjouot            #+#    #+#             */
-/*   Updated: 2023/01/24 15:14:51 by mjouot           ###   ########.fr       */
+/*   Updated: 2023/01/27 13:51:27 by mjouot           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 #include "pipex_bonus.h"
@@ -16,6 +16,7 @@ void	here_doc(char *delimiter, t_pipex *d)
 	int		here_doc;
 	char	*buf;
 
+	buf = NULL;
 	here_doc = open(".heredoc_tmp", O_CREAT | O_WRONLY | O_TRUNC, 0644);
 	if (here_doc < 0)
 		is_error("heredoc error", d);
@@ -26,8 +27,7 @@ void	here_doc(char *delimiter, t_pipex *d)
 			is_error("heredoc error", d);
 		if (!ft_strncmp(delimiter, buf, ft_strlen(delimiter) + 1))
 			break ;
-		write(here_doc, buf, ft_strlen(buf));
-		write(here_doc, "\n", 1);
+		ft_putendl_fd(buf, here_doc);
 		free(buf);
 	}
 	free(buf);
