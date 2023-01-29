@@ -6,7 +6,7 @@
 /*   By: mjouot <mjouot@student.42angouleme.fr>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/01/24 15:11:16 by mjouot            #+#    #+#             */
-/*   Updated: 2023/01/27 13:51:27 by mjouot           ###   ########.fr       */
+/*   Updated: 2023/01/29 23:41:35 by mjouot           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 #include "pipex_bonus.h"
@@ -14,15 +14,15 @@
 void	here_doc(char *delimiter, t_pipex *d)
 {
 	int		here_doc;
-	char	*buf;
+	char	*line;
 
-	buf = NULL;
+	line = NULL;
 	here_doc = open(".heredoc_tmp", O_CREAT | O_WRONLY | O_TRUNC, 0644);
 	if (here_doc < 0)
 		is_error("heredoc error", d);
 	while (1)
 	{
-		write(1, "heredoc> ", 9);
+		write(1, "here_doc > ", 11);
 		if (get_next_line(0) < 0)
 			is_error("heredoc error", d);
 		if (!ft_strncmp(delimiter, buf, ft_strlen(delimiter) + 1))

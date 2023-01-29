@@ -6,7 +6,7 @@
 /*   By: mjouot <mjouot@student.42angouleme.fr>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/04 16:15:30 by mjouot            #+#    #+#             */
-/*   Updated: 2023/01/27 16:00:56 by mjouot           ###   ########.fr       */
+/*   Updated: 2023/01/29 23:36:08 by mjouot           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -81,23 +81,13 @@ void	redirect_io(t_pipex *d)
 		even_or_odd(d);
 }
 
-void	child(t_pipex *d, char **argv, char **envp)
+void	child(t_pipex *d, char **envp)
 {
-	char 	*tmp;
-	char	**cmd;
-
-	cmd = ft_split(argv[d->idx + 2], ' ');
-	tmp = path(envp, cmd[0]);
-	if (cmd[0] != NULL && tmp)
-	{
-		redirect_io(d);
-		execve(tmp, cmd, envp);
-	}
+	redirect_io(d);
+	if (d->cmd[0] != NULL && d->path)
+		execve(d->path, d->cmd, envp);
 	else
-	{
-		free(tmp);
 	 	cant_find_cmd(cmd, d);
-	}
 }
 
 void	start_process(t_pipex *d, char **argv, char **envp)
@@ -112,12 +102,16 @@ void	start_process(t_pipex *d, char **argv, char **envp)
 		if (d->idx % 2 != 0)
 			if (pipe(d->pipeA) < 0)
 				is_error("Pipefd error", d);
+		d->cmd = ft_split(argv[d->idx + 2 + d->here_doc], ' ');
+		d->path = path(envp, d->cmd[0]);
 		pid = fork();
 		if (pid < 0)
 			is_error("Fork error", d);
-		if (pid == 0)
-			child(d, argv, envp);
+		else if (pid == 0)
+			child(d, envp);
 		waitpid(pid, NULL, 0);
+		free_strs(d->cmd);
+		free(d->path);
 		d->idx++;
 	}
 }
