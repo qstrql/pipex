@@ -6,7 +6,7 @@
 /*   By: mjouot <mjouot@student.42angouleme.fr>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/04 16:15:42 by mjouot            #+#    #+#             */
-/*   Updated: 2023/01/27 15:35:14 by mjouot           ###   ########.fr       */
+/*   Updated: 2023/01/30 13:05:51 by mjouot           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,8 +31,8 @@ typedef struct s_pipex
 {
 	int		nb_cmds;
 	int		fd[2];
-	int		pipeA[2];
-	int		pipeB[2];
+	int		pipe_a[2];
+	int		pipe_b[2];
 	int		here_doc;
 	pid_t	pid;
 	char 	**cmd;

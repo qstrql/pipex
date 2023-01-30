@@ -6,7 +6,7 @@
 /*   By: mjouot <mjouot@student.42angouleme.fr>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/04 16:15:30 by mjouot            #+#    #+#             */
-/*   Updated: 2023/01/29 23:36:08 by mjouot           ###   ########.fr       */
+/*   Updated: 2023/01/30 16:00:54 by mjouot           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -39,55 +39,63 @@ t_pipex	init(int argc, char **argv)
 	return (d);
 }
 
-void	even_or_odd(t_pipex *d)
-{
-	if (d->idx % 2 == 0)
-	{
-		close(d->pipeA[READ]);
-		close(d->pipeB[WRITE]);
-		dup2(d->pipeA[READ], STDIN_FILENO);
-    	dup2(d->pipeB[WRITE], STDOUT_FILENO);
-	}
-	else if (d->idx % 2 != 0)
-	{
-		close(d->pipeB[READ]);
-		close(d->pipeA[WRITE]);
-		dup2(d->pipeB[READ], STDIN_FILENO);
-		dup2(d->pipeA[WRITE], STDOUT_FILENO);
-	}
-}
-
-void	redirect_io(t_pipex *d)
+void	dup_io(t_pipex *d)
 {
 	if (d->idx == 0)
 	{
-		close(d->pipeB[WRITE]);
-		dup2(d->pipeB[WRITE], STDOUT_FILENO);
+		dup2(d->fd[0], STDIN_FILENO);
+		dup2(d->pipe_b[WRITE], STDOUT_FILENO);
 	}
+	else if (d->idx == d->nb_cmds - 1)
+	{
+		dup2(d->fd[1], STDOUT_FILENO);
+		if (d->idx % 2 == 0)
+			dup2(d->pipe_b[READ], STDIN_FILENO);
+		else
+			dup2(d->pipe_a[READ], STDIN_FILENO); 
+	}
+	else if (d->idx % 2 == 0)
+	{
+		dup2(d->pipe_a[READ], STDIN_FILENO);
+    	dup2(d->pipe_b[WRITE], STDOUT_FILENO);
+	}
+	else if (d->idx % 2 != 0)
+	{
+		dup2(d->pipe_b[READ], STDIN_FILENO);
+		dup2(d->pipe_a[WRITE], STDOUT_FILENO);
+	}
+}
+
+void	closefd(t_pipex *d)
+{
+	if (d->idx == 0)
+		close(d->pipe_b[WRITE]);
 	else if (d->idx == d->nb_cmds)
 	{
 		if (d->idx % 2 == 0)
-		{	
-			close(d->pipeB[WRITE]);
-			dup2(d->pipeB[READ], STDIN_FILENO);
-		}
+			close(d->pipe_b[WRITE]);
 		else
-		{	    
-			close(d->pipeA[WRITE]);
-			dup2(d->pipeA[READ], STDIN_FILENO); 
-		}
+			close(d->pipe_a[WRITE]); 
 	}
-	else
-		even_or_odd(d);
+	else if (d->idx % 2 == 0)
+	{
+		close(d->pipe_a[READ]);
+    	close(d->pipe_b[WRITE]);
+	}
+	else if (d->idx % 2 != 0)
+	{
+		close(d->pipe_b[READ]);
+		close(d->pipe_a[WRITE]);
+	}
 }
 
 void	child(t_pipex *d, char **envp)
 {
-	redirect_io(d);
+	dup_io(d);
 	if (d->cmd[0] != NULL && d->path)
 		execve(d->path, d->cmd, envp);
 	else
-	 	cant_find_cmd(cmd, d);
+	 	cant_find_cmd(d->cmd, d);
 }
 
 void	start_process(t_pipex *d, char **argv, char **envp)
@@ -97,10 +105,10 @@ void	start_process(t_pipex *d, char **argv, char **envp)
 	while (d->idx < d->nb_cmds)
 	{
 		if (d->idx % 2 == 0)
-			if (pipe(d->pipeB) < 0)
+			if (pipe(d->pipe_b) < 0)
 				is_error("Pipefd error", d);
 		if (d->idx % 2 != 0)
-			if (pipe(d->pipeA) < 0)
+			if (pipe(d->pipe_a) < 0)
 				is_error("Pipefd error", d);
 		d->cmd = ft_split(argv[d->idx + 2 + d->here_doc], ' ');
 		d->path = path(envp, d->cmd[0]);
@@ -109,6 +117,7 @@ void	start_process(t_pipex *d, char **argv, char **envp)
 			is_error("Fork error", d);
 		else if (pid == 0)
 			child(d, envp);
+		closefd(d);
 		waitpid(pid, NULL, 0);
 		free_strs(d->cmd);
 		free(d->path);
