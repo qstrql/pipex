@@ -6,7 +6,7 @@
 /*   By: mjouot <mjouot@student.42angouleme.fr>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/04 16:15:30 by mjouot            #+#    #+#             */
-/*   Updated: 2023/02/02 11:19:53 by mjouot           ###   ########.fr       */
+/*   Updated: 2023/02/02 12:37:27 by mjouot           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,10 +29,7 @@ t_pipex	init(int argc, char **argv)
 		if (d.fd[0] < 0)
 				is_error("infile error", &d);
 	}
-	if (d.here_doc == 1)
-		d.fd[1] = open(argv[1], O_WRONLY | O_CREAT | O_APPEND, 0644);
-	else
-		d.fd[1] = open(argv[argc - 1], O_WRONLY | O_CREAT | O_TRUNC, 0644);
+	d.fd[1] = open(argv[argc - 1], O_WRONLY | O_CREAT | O_TRUNC, 0644);
 	if (d.fd[1] < 0)
 			is_error("outfile error", &d);
 	d.idx = 0;
