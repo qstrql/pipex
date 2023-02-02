@@ -6,7 +6,7 @@
 /*   By: mjouot <mjouot@student.42angouleme.fr>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/04 16:15:30 by mjouot            #+#    #+#             */
-/*   Updated: 2023/01/30 16:00:54 by mjouot           ###   ########.fr       */
+/*   Updated: 2023/02/02 11:19:53 by mjouot           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -66,32 +66,10 @@ void	dup_io(t_pipex *d)
 	}
 }
 
-void	closefd(t_pipex *d)
-{
-	if (d->idx == 0)
-		close(d->pipe_b[WRITE]);
-	else if (d->idx == d->nb_cmds)
-	{
-		if (d->idx % 2 == 0)
-			close(d->pipe_b[WRITE]);
-		else
-			close(d->pipe_a[WRITE]); 
-	}
-	else if (d->idx % 2 == 0)
-	{
-		close(d->pipe_a[READ]);
-    	close(d->pipe_b[WRITE]);
-	}
-	else if (d->idx % 2 != 0)
-	{
-		close(d->pipe_b[READ]);
-		close(d->pipe_a[WRITE]);
-	}
-}
-
 void	child(t_pipex *d, char **envp)
 {
 	dup_io(d);
+	close_all(d);
 	if (d->cmd[0] != NULL && d->path)
 		execve(d->path, d->cmd, envp);
 	else
@@ -129,15 +107,8 @@ int	main(int argc, char **argv, char **envp)
 {
 	t_pipex d;
 
-	if (argc < 5)
-	{
-		ft_putendl_fd
-			("Wrong arguments, use ./pipex file1 cmd1 cmd2 ... file2", 2);
-		return (0);
-	}
-	if (!envp || envp[0][0] == '\0')
-		is_error("Envp error", &d);
 	d = init(argc, argv);
 	start_process(&d, argv, envp);
+	close_all(&d);
 	return (0);
 }
