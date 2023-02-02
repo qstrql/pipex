@@ -6,7 +6,7 @@
 /*   By: mjouot <mjouot@student.42angouleme.fr>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/22 11:40:05 by mjouot            #+#    #+#             */
-/*   Updated: 2023/02/02 11:19:00 by mjouot           ###   ########.fr       */
+/*   Updated: 2023/02/02 16:56:40 by mjouot           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,7 +29,6 @@ void	is_error(char *str, t_pipex *d)
 {
 	(void)d;
 	perror(str);
-	close_all(d);
 	exit(EXIT_FAILURE);
 }
 

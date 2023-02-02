@@ -6,7 +6,7 @@
 /*   By: mjouot <mjouot@student.42angouleme.fr>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/04 16:15:30 by mjouot            #+#    #+#             */
-/*   Updated: 2023/02/02 12:37:27 by mjouot           ###   ########.fr       */
+/*   Updated: 2023/02/02 16:56:16 by mjouot           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -98,6 +98,7 @@ void	start_process(t_pipex *d, char **argv, char **envp)
 		free(d->path);
 		d->idx++;
 	}
+	close_all(d);
 }
 
 int	main(int argc, char **argv, char **envp)
@@ -106,6 +107,5 @@ int	main(int argc, char **argv, char **envp)
 
 	d = init(argc, argv);
 	start_process(&d, argv, envp);
-	close_all(&d);
 	return (0);
 }
